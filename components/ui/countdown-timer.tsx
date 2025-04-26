@@ -142,7 +142,7 @@ interface TimeDigitProps {
 function TimeDigit({ value, label, size, labelSize }: TimeDigitProps) {
   return (
     <div className="flex flex-col items-center">
-      <div className="relative bg-gradient-to-b from-white to-gray-100 rounded-lg shadow-lg px-3 py-2">
+      <div className="relative bg-gradient-to-b from-white to-gray-100 rounded-lg shadow-lg px-2 py-1 sm:px-3 sm:py-2 min-w-0 w-full">
         <AnimatePresence mode="popLayout">
           <motion.div
             key={value}
