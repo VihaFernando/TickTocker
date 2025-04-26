@@ -24,7 +24,7 @@ export function CountdownTimer({ eventName, eventDate, className = "", size = "m
   useEffect(() => {
     function updateCountdown() {
       const now = new Date()
-      const target = new Date(eventDate)
+      const target = new Date(eventDate) // eventDate is in local time (YYYY-MM-DDThh:mm)
       const diff = target.getTime() - now.getTime()
 
       if (diff <= 0) {
@@ -49,7 +49,7 @@ export function CountdownTimer({ eventName, eventDate, className = "", size = "m
       // Calculate total hours for display when less than a week
       const totalHours = Math.floor(diff / (1000 * 60 * 60))
 
-      // Less than a week is 7 days or 168 hours
+      // Less than a week is 7 days
       const isLessThanWeek = days < 7
 
       setTimeRemaining({
@@ -174,4 +174,42 @@ function TimeSeparator({ size }: { size: string }) {
       <div className={`${size} font-bold text-gray-300 mx-1`}>:</div>
     </div>
   )
+}
+
+export function formatTimeRemaining(targetDate: Date | string): {
+  timeString: string
+  isLessThanWeek: boolean
+} {
+  const target = typeof targetDate === "string" ? new Date(targetDate) : targetDate // Interprets as local time
+  const now = new Date()
+
+  // Calculate the difference in milliseconds
+  const diff = target.getTime() - now.getTime()
+
+  // If the date is in the past
+  if (diff <= 0) {
+    return { timeString: "Event has passed", isLessThanWeek: true }
+  }
+
+  // Calculate time units
+  const seconds = Math.floor(diff / 1000) % 60
+  const minutes = Math.floor(diff / (1000 * 60)) % 60
+  const hours = Math.floor(diff / (1000 * 60 * 60)) % 24
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const totalHours = Math.floor(diff / (1000 * 60 * 60))
+
+  const isLessThanWeek = days < 7
+
+  // Format the string based on the time remaining
+  if (isLessThanWeek) {
+    return {
+      timeString: `${totalHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+      isLessThanWeek,
+    }
+  } else {
+    return {
+      timeString: `${days}d ${hours.toString().padStart(2, "0")}h ${minutes.toString().padStart(2, "0")}m`,
+      isLessThanWeek,
+    }
+  }
 }

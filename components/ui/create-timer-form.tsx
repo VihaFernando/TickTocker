@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { createTimer } from "@/utils/timer-actions"
 import { useRouter } from "next/navigation"
@@ -56,9 +55,9 @@ export function CreateTimerForm() {
     }
   }
 
-  // Calculate minimum date (today)
+  // Calculate minimum date (today) in local timezone
   const today = new Date()
-  const minDate = today.toISOString().split("T")[0]
+  const minDate = today.toISOString().slice(0, 16) // Format as YYYY-MM-DDThh:mm
 
   const formVariants = {
     hidden: { opacity: 0, y: 20 },
