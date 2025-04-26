@@ -16,11 +16,11 @@ export default async function DashboardPage() {
       <Navbar username={user.username} />
 
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center space-x-3 mb-8">
-          <div className="h-10 w-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-            <Clock className="h-5 w-5 text-white" />
+        <div className="flex items-center space-x-2 sm:space-x-3 mb-8">
+          <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+            <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
+          <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
             My Countdown Timers
           </h1>
         </div>
