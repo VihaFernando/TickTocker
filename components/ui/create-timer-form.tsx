@@ -170,7 +170,7 @@ export function CreateTimerForm() {
       onClick={() => {
         const hiddenInput = document.getElementById("hiddenDateInput");
         if (hiddenInput) {
-          hiddenInput.showPicker?.(); // Trigger the picker if supported
+          (hiddenInput as HTMLInputElement).showPicker?.(); // Trigger the picker if supported
           hiddenInput.click(); // Fallback to click
         }
       }}
