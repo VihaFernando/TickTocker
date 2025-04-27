@@ -154,30 +154,45 @@ export function CreateTimerForm() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Label htmlFor="eventDate" className="text-sm font-medium text-gray-700 mb-1 block">
-            Event Date & Time
-          </Label>
+  <Label htmlFor="eventDate" className="text-sm font-medium text-gray-700 mb-1 block">
+    Event Date & Time
+  </Label>
 
-          {/* Simple solution with proper styling */}
-          <div className="relative">
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
-              <CalendarIcon className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              id="eventDate"
-              name="eventDate"
-              type="datetime-local"
-              min={minDate}
-              required
-              value={formState.eventDate}
-              onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
-              className="w-full pl-10 py-2 border border-gray-200 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-left"
-              style={{ textAlign: "left", paddingRight: "10px" }}
-            />
-          </div>
+  <div className="relative">
+    <Input
+      id="eventDate"
+      name="eventDate"
+      type="text"
+      required
+      className="pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
+      value={new Date(formState.eventDate).toLocaleString()}
+      readOnly
+      onClick={() => {
+        const hiddenInput = document.getElementById("hiddenDateInput");
+        if (hiddenInput) {
+          hiddenInput.showPicker?.(); // Trigger the picker if supported
+          hiddenInput.click(); // Fallback to click
+        }
+      }}
+    />
+    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+      <CalendarIcon className="h-5 w-5 text-gray-400" />
+    </div>
 
-          <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
-        </motion.div>
+    {/* Hidden input for actual date selection */}
+    <input
+      id="hiddenDateInput"
+      type="datetime-local"
+      min={minDate}
+      value={formState.eventDate}
+      onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
+      className="absolute opacity-0 pointer-events-none"
+      style={{ top: '0', left: '0', width: '100%', height: '100%' }}
+    />
+  </div>
+
+  <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
+</motion.div>
 
         <motion.div variants={itemVariants}>
           <Button
