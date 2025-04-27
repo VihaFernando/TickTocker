@@ -166,7 +166,7 @@ export function CreateTimerForm() {
             </div>
 
             {/* Spacer div to push text away from icon */}
-            <div className="absolute left-0 top-0 h-full w-10 bg-transparent pointer-events-none"></div>
+            
 
             {/* The actual input with specific iOS fixes */}
             <Input
