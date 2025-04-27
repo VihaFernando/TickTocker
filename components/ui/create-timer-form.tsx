@@ -170,8 +170,14 @@ export function CreateTimerForm() {
       onClick={() => {
         const hiddenInput = document.getElementById("hiddenDateInput");
         if (hiddenInput) {
+          // Temporarily make the input interactable for iOS compatibility
+          hiddenInput.classList.remove("pointer-events-none");
           (hiddenInput as HTMLInputElement).showPicker?.(); // Trigger the picker if supported
           hiddenInput.click(); // Fallback to click
+          // Re-disable pointer events after a short delay
+          setTimeout(() => {
+            hiddenInput.classList.add("pointer-events-none");
+          }, 100);
         }
       }}
     />
