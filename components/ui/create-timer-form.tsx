@@ -158,32 +158,20 @@ export function CreateTimerForm() {
             Event Date & Time
           </Label>
 
-          {/* iOS-friendly date input solution */}
-          <div className="relative">
-            {/* Calendar icon */}
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
+          {/* Simple solution without extra padding */}
+          <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+            <div className="px-3 py-2">
               <CalendarIcon className="h-5 w-5 text-gray-400" />
             </div>
-
-            {/* Spacer div to push text away from icon */}
-            
-
-            {/* The actual input with specific iOS fixes */}
-            <Input
+            <input
               id="eventDate"
               name="eventDate"
               type="datetime-local"
               min={minDate}
               required
               value={formState.eventDate}
-              onChange={handleChange}
-              className="w-full pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
-              style={{
-                textAlign: "left",
-                WebkitAppearance: "none",
-                MozAppearance: "none",
-                appearance: "none",
-              }}
+              onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
+              className="flex-1 border-0 focus:ring-0 focus:outline-none py-2"
             />
           </div>
 
