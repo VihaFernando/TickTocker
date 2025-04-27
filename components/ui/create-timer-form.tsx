@@ -158,20 +158,33 @@ export function CreateTimerForm() {
             Event Date & Time
           </Label>
 
-          {/* Simple solution without extra padding */}
-          <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-            <div className="px-3 py-2">
-              <CalendarIcon className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
+          {/* Use the same approach as the event name field */}
+          <div className="relative">
+            <Input
               id="eventDate"
               name="eventDate"
+              type="text"
+              required
+              className="pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
+              value={new Date(formState.eventDate).toLocaleString()}
+              readOnly
+              onClick={() => {
+                // When clicked, open a hidden datetime-local input
+                document.getElementById("hiddenDateInput")?.click()
+              }}
+            />
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+              <CalendarIcon className="h-5 w-5 text-gray-400" />
+            </div>
+
+            {/* Hidden input for actual date selection */}
+            <input
+              id="hiddenDateInput"
               type="datetime-local"
               min={minDate}
-              required
               value={formState.eventDate}
               onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
-              className="flex-1 border-0 focus:ring-0 focus:outline-none py-2"
+              className="hidden"
             />
           </div>
 
