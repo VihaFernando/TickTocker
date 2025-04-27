@@ -22,6 +22,12 @@ export function EditTimerForm({ id, eventName, eventDate }: EditTimerFormProps) 
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formattedDate, setFormattedDate] = useState("")
+  const [formState, setFormState] = useState({
+    eventDate: eventDate,
+  })
+
+  // Define a minimum date for the datetime-local input
+  const minDate = new Date().toISOString().slice(0, 16) // Current date and time in "YYYY-MM-DDTHH:mm" format
 
   // Format the date for the input when component mounts
   useEffect(() => {
@@ -111,24 +117,52 @@ export function EditTimerForm({ id, eventName, eventDate }: EditTimerFormProps) 
     <Input
       id="eventDate"
       name="eventDate"
-      type="datetime-local"
-      value={formattedDate} // Make sure formattedDate is in correct "yyyy-MM-ddTHH:mm" format!
-      onChange={(e) => setFormattedDate(e.target.value)}
+      type="text"
       required
-      className="w-full pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg text-gray-900"
+      className="pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
+      value={new Date(formState.eventDate).toLocaleString()}
+      readOnly
+      onClick={() => {
+        const hiddenInput = document.getElementById("hiddenDateInput") as HTMLInputElement | null;
+        if (hiddenInput) {
+          hiddenInput.style.opacity = '0.01'; 
+          hiddenInput.classList.remove("pointer-events-none");
+          hiddenInput.showPicker?.();
+          hiddenInput.focus();
+          hiddenInput.click();
+          setTimeout(() => {
+            hiddenInput.style.opacity = '0';
+            hiddenInput.classList.add("pointer-events-none");
+          }, 500);
+        }
+      }}
+    />
+    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+      <CalendarIcon className="h-5 w-5 text-gray-400" />
+    </div>
+
+    <input
+      id="hiddenDateInput"
+      type="datetime-local"
+      min={minDate}
+      value={formState.eventDate}
+      onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
+      className="absolute pointer-events-none"
       style={{
-        textAlign: "left",
-        WebkitAppearance: "none",
-        MozAppearance: "textfield", // Important for Firefox
-        appearance: "none",
-        paddingLeft: "2.5rem", // Ensure text doesn't overlap with icon
-        minHeight: "2.5rem", // Helps with iOS input sizing
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        opacity: 0,
       }}
     />
   </div>
 
   <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
 </div>
+
+
+
 
 
         <div className="flex space-x-4">
