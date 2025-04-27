@@ -20,11 +20,8 @@ export function CreateTimerForm() {
     eventDate: "",
   })
 
-  // Set the initial date value when component mounts
   useEffect(() => {
-    // Get current date and time in local timezone
     const now = new Date()
-    // Format to YYYY-MM-DDThh:mm
     const localDatetime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
 
     setFormState((prev) => ({
@@ -46,16 +43,10 @@ export function CreateTimerForm() {
 
     const formData = new FormData(e.currentTarget)
 
-    // Ensure the date is preserved in the user's timezone
-    const eventDate = formData.get("eventDate") as string
-    if (eventDate) {
-      // Create a Date object in the user's local timezone
-      const localDate = new Date(eventDate)
-
-      // Convert to ISO string (this will be in UTC)
+    // ✅ iPhone Fix: manually set the eventDate from the state
+    if (formState.eventDate) {
+      const localDate = new Date(formState.eventDate)
       const isoDate = localDate.toISOString()
-
-      // Replace the form data with the ISO string
       formData.set("eventDate", isoDate)
     }
 
@@ -75,7 +66,7 @@ export function CreateTimerForm() {
         description: "Timer created successfully",
       })
       router.refresh()
-      // Reset the form name but keep the date field with updated current time
+
       const now = new Date()
       const localDatetime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
 
@@ -86,7 +77,6 @@ export function CreateTimerForm() {
     }
   }
 
-  // Calculate minimum date (today)
   const today = new Date()
   const minDate = today.toISOString().split("T")[0]
 
@@ -154,64 +144,57 @@ export function CreateTimerForm() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-  <Label htmlFor="eventDate" className="text-sm font-medium text-gray-700 mb-1 block">
-    Event Date & Time
-  </Label>
+          <Label htmlFor="eventDate" className="text-sm font-medium text-gray-700 mb-1 block">
+            Event Date & Time
+          </Label>
 
-  <div className="relative">
-    <Input
-      id="eventDate"
-      name="eventDate"
-      type="text"
-      required
-      className="pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
-      value={new Date(formState.eventDate).toLocaleString()}
-      readOnly
-      onClick={() => {
-        const hiddenInput = document.getElementById("hiddenDateInput") as HTMLInputElement | null;
-        if (hiddenInput) {
-          // Temporarily make it minimally visible and interactive
-          hiddenInput.style.opacity = '0.01'; 
-          hiddenInput.classList.remove("pointer-events-none");
+          <div className="relative">
+            <Input
+              id="eventDate"
+              name="eventDate"
+              type="text"
+              required
+              className="pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
+              value={new Date(formState.eventDate).toLocaleString()}
+              readOnly
+              onClick={() => {
+                const hiddenInput = document.getElementById("hiddenDateInput") as HTMLInputElement | null;
+                if (hiddenInput) {
+                  hiddenInput.style.opacity = '0.01'; 
+                  hiddenInput.classList.remove("pointer-events-none");
+                  hiddenInput.showPicker?.();
+                  hiddenInput.focus();
+                  hiddenInput.click();
+                  setTimeout(() => {
+                    hiddenInput.style.opacity = '0';
+                    hiddenInput.classList.add("pointer-events-none");
+                  }, 500);
+                }
+              }}
+            />
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+              <CalendarIcon className="h-5 w-5 text-gray-400" />
+            </div>
 
-          // Try to open the picker
-          hiddenInput.showPicker?.();
-          hiddenInput.focus();
-          hiddenInput.click();
+            <input
+              id="hiddenDateInput"
+              type="datetime-local"
+              min={minDate}
+              value={formState.eventDate}
+              onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
+              className="absolute pointer-events-none"
+              style={{
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                opacity: 0,
+              }}
+            />
+          </div>
 
-          // After a short delay, make it fully invisible again
-          setTimeout(() => {
-            hiddenInput.style.opacity = '0';
-            hiddenInput.classList.add("pointer-events-none");
-          }, 500);
-        }
-      }}
-    />
-    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-      <CalendarIcon className="h-5 w-5 text-gray-400" />
-    </div>
-
-    {/* Hidden input for actual date selection */}
-    <input
-      id="hiddenDateInput"
-      type="datetime-local"
-      min={minDate}
-      value={formState.eventDate}
-      onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
-      className="absolute pointer-events-none"
-      style={{
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        opacity: 0, 
-      }}
-    />
-  </div>
-
-  <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
-</motion.div>
-
+          <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
+        </motion.div>
 
         <motion.div variants={itemVariants}>
           <Button
