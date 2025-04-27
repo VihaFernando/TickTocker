@@ -94,38 +94,42 @@ export function EditTimerForm({ id, eventName, eventDate }: EditTimerFormProps) 
         </div>
 
         <div>
-          <Label htmlFor="eventDate">Event Date & Time</Label>
+  <Label htmlFor="eventDate" className="text-sm font-medium text-gray-700 mb-1 block">
+    Event Date & Time
+  </Label>
 
-          {/* iOS-friendly date input solution */}
-          <div className="relative mt-1">
-            {/* Calendar icon */}
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
-              <CalendarIcon className="h-5 w-5 text-gray-400" />
-            </div>
+  <div className="relative mt-1">
+    {/* Calendar icon */}
+    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
+      <CalendarIcon className="h-5 w-5 text-gray-400" />
+    </div>
 
-            {/* Spacer div to push text away from icon */}
-            <div className="absolute left-0 top-0 h-full w-10 bg-transparent pointer-events-none"></div>
+    {/* Spacer div to push text away from icon */}
+    <div className="absolute left-0 top-0 h-full w-10 bg-transparent pointer-events-none" />
 
-            {/* The actual input with specific iOS fixes */}
-            <Input
-              id="eventDate"
-              name="eventDate"
-              type="datetime-local"
-              value={formattedDate}
-              onChange={(e) => setFormattedDate(e.target.value)}
-              required
-              className="w-full pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
-              style={{
-                textAlign: "left",
-                WebkitAppearance: "none",
-                MozAppearance: "none",
-                appearance: "none",
-              }}
-            />
-          </div>
+    {/* The actual input */}
+    <Input
+      id="eventDate"
+      name="eventDate"
+      type="datetime-local"
+      value={formattedDate} // Make sure formattedDate is in correct "yyyy-MM-ddTHH:mm" format!
+      onChange={(e) => setFormattedDate(e.target.value)}
+      required
+      className="w-full pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg text-gray-900"
+      style={{
+        textAlign: "left",
+        WebkitAppearance: "none",
+        MozAppearance: "textfield", // Important for Firefox
+        appearance: "none",
+        paddingLeft: "2.5rem", // Ensure text doesn't overlap with icon
+        minHeight: "2.5rem", // Helps with iOS input sizing
+      }}
+    />
+  </div>
 
-          <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
-        </div>
+  <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
+</div>
+
 
         <div className="flex space-x-4">
           <Button
