@@ -168,16 +168,22 @@ export function CreateTimerForm() {
       value={new Date(formState.eventDate).toLocaleString()}
       readOnly
       onClick={() => {
-        const hiddenInput = document.getElementById("hiddenDateInput");
+        const hiddenInput = document.getElementById("hiddenDateInput") as HTMLInputElement | null;
         if (hiddenInput) {
-          // Temporarily make the input interactable for iOS compatibility
+          // Temporarily make it minimally visible and interactive
+          hiddenInput.style.opacity = '0.01'; 
           hiddenInput.classList.remove("pointer-events-none");
-          (hiddenInput as HTMLInputElement).showPicker?.(); // Trigger the picker if supported
-          hiddenInput.click(); // Fallback to click
-          // Re-disable pointer events after a short delay
+
+          // Try to open the picker
+          hiddenInput.showPicker?.();
+          hiddenInput.focus();
+          hiddenInput.click();
+
+          // After a short delay, make it fully invisible again
           setTimeout(() => {
+            hiddenInput.style.opacity = '0';
             hiddenInput.classList.add("pointer-events-none");
-          }, 100);
+          }, 500);
         }
       }}
     />
@@ -192,13 +198,20 @@ export function CreateTimerForm() {
       min={minDate}
       value={formState.eventDate}
       onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
-      className="absolute opacity-0 pointer-events-none"
-      style={{ top: '0', left: '0', width: '100%', height: '100%' }}
+      className="absolute pointer-events-none"
+      style={{
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        opacity: 0, 
+      }}
     />
   </div>
 
   <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
 </motion.div>
+
 
         <motion.div variants={itemVariants}>
           <Button
