@@ -158,20 +158,32 @@ export function CreateTimerForm() {
             Event Date & Time
           </Label>
 
-          {/* Custom input wrapper with icon */}
-          <div className="flex items-center border border-gray-200 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 overflow-hidden">
-            <div className="flex-shrink-0 pl-3 pr-2">
+          {/* iOS-friendly date input solution */}
+          <div className="relative">
+            {/* Calendar icon */}
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
               <CalendarIcon className="h-5 w-5 text-gray-400" />
             </div>
-            <input
+
+            {/* Spacer div to push text away from icon */}
+            <div className="absolute left-0 top-0 h-full w-10 bg-transparent pointer-events-none"></div>
+
+            {/* The actual input with specific iOS fixes */}
+            <Input
               id="eventDate"
               name="eventDate"
               type="datetime-local"
               min={minDate}
               required
-              className="flex-grow py-2 px-1 border-0 focus:ring-0 focus:outline-none text-left w-full"
               value={formState.eventDate}
-              onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
+              onChange={handleChange}
+              className="w-full pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
+              style={{
+                textAlign: "left",
+                WebkitAppearance: "none",
+                MozAppearance: "none",
+                appearance: "none",
+              }}
             />
           </div>
 
