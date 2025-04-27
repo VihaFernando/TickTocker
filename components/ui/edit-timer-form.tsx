@@ -31,11 +31,8 @@ export function EditTimerForm({ id, eventName, eventDate }: EditTimerFormProps) 
 
   // Format the date for the input when component mounts
   useEffect(() => {
-    // Convert the UTC date to local date for the input
     const date = new Date(eventDate)
 
-    // Format to YYYY-MM-DDThh:mm in local timezone
-    // This properly handles the timezone conversion for the datetime-local input
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, "0")
     const day = String(date.getDate()).padStart(2, "0")
@@ -52,18 +49,22 @@ export function EditTimerForm({ id, eventName, eventDate }: EditTimerFormProps) 
 
     const formData = new FormData(e.currentTarget)
 
-    // Ensure the date is preserved in the user's timezone
-    const eventDate = formData.get("eventDate") as string
-    if (eventDate) {
-      // Create a Date object in the user's local timezone
-      const localDate = new Date(eventDate)
-
-      // Convert to ISO string (this will be in UTC)
-      const isoDate = localDate.toISOString()
-
-      // Replace the form data with the ISO string
-      formData.set("eventDate", isoDate)
+    // Fix: make sure eventDate is not empty (important for iPhone)
+    const eventDateValue = formState.eventDate
+    if (!eventDateValue) {
+      toast({
+        title: "Error",
+        description: "Please select a valid date and time.",
+        variant: "destructive",
+      })
+      setIsSubmitting(false)
+      return
     }
+
+    const localDate = new Date(eventDateValue)
+    const isoDate = localDate.toISOString()
+
+    formData.set("eventDate", isoDate)
 
     const result = await updateTimer(id, formData)
 
@@ -100,70 +101,70 @@ export function EditTimerForm({ id, eventName, eventDate }: EditTimerFormProps) 
         </div>
 
         <div>
-  <Label htmlFor="eventDate" className="text-sm font-medium text-gray-700 mb-1 block">
-    Event Date & Time
-  </Label>
+          <Label htmlFor="eventDate" className="text-sm font-medium text-gray-700 mb-1 block">
+            Event Date & Time
+          </Label>
 
-  <div className="relative mt-1">
-    {/* Calendar icon */}
-    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
-      <CalendarIcon className="h-5 w-5 text-gray-400" />
-    </div>
+          <div className="relative mt-1">
+            {/* Calendar icon */}
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
+              <CalendarIcon className="h-5 w-5 text-gray-400" />
+            </div>
 
-    {/* Spacer div to push text away from icon */}
-    <div className="absolute left-0 top-0 h-full w-10 bg-transparent pointer-events-none" />
+            {/* Spacer div */}
+            <div className="absolute left-0 top-0 h-full w-10 bg-transparent pointer-events-none" />
 
-    {/* The actual input */}
-    <Input
-      id="eventDate"
-      name="eventDate"
-      type="text"
-      required
-      className="pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
-      value={new Date(formState.eventDate).toLocaleString()}
-      readOnly
-      onClick={() => {
-        const hiddenInput = document.getElementById("hiddenDateInput") as HTMLInputElement | null;
-        if (hiddenInput) {
-          hiddenInput.style.opacity = '0.01'; 
-          hiddenInput.classList.remove("pointer-events-none");
-          hiddenInput.showPicker?.();
-          hiddenInput.focus();
-          hiddenInput.click();
-          setTimeout(() => {
-            hiddenInput.style.opacity = '0';
-            hiddenInput.classList.add("pointer-events-none");
-          }, 500);
-        }
-      }}
-    />
-    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-      <CalendarIcon className="h-5 w-5 text-gray-400" />
-    </div>
+            {/* Displayed input */}
+            <Input
+              id="eventDate"
+              name="eventDate"
+              type="text"
+              required
+              className="pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
+              value={new Date(formState.eventDate).toLocaleString()}
+              readOnly
+              onClick={() => {
+                const hiddenInput = document.getElementById("hiddenDateInput") as HTMLInputElement | null
+                if (hiddenInput) {
+                  hiddenInput.style.opacity = "0.01"
+                  hiddenInput.classList.remove("pointer-events-none")
+                  hiddenInput.showPicker?.()
+                  hiddenInput.focus()
+                  hiddenInput.click()
+                  setTimeout(() => {
+                    hiddenInput.style.opacity = "0"
+                    hiddenInput.classList.add("pointer-events-none")
+                  }, 500)
+                }
+              }}
+            />
 
-    <input
-      id="hiddenDateInput"
-      type="datetime-local"
-      min={minDate}
-      value={formState.eventDate}
-      onChange={(e) => setFormState({ ...formState, eventDate: e.target.value })}
-      className="absolute pointer-events-none"
-      style={{
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        opacity: 0,
-      }}
-    />
-  </div>
+            {/* Hidden datetime-local input */}
+            <input
+              id="hiddenDateInput"
+              type="datetime-local"
+              min={minDate}
+              value={formState.eventDate}
+              onChange={(e) => {
+                // Fix for iPhone: force update immediately on change
+                const newValue = e.target.value
+                if (newValue) {
+                  setFormState({ ...formState, eventDate: newValue })
+                }
+              }}
+              className="absolute pointer-events-none"
+              style={{
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                opacity: 0,
+              }}
+            />
+          </div>
 
-  <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
-</div>
-
-
-
-
+          <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
+        </div>
 
         <div className="flex space-x-4">
           <Button
