@@ -164,11 +164,11 @@ export function CreateTimerForm() {
               type="datetime-local"
               min={minDate}
               required
-              className="pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
+              className="pl-10 pr-3 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg appearance-none"
               value={formState.eventDate}
               onChange={handleChange}
             />
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
               <CalendarIcon className="h-5 w-5 text-gray-400" />
             </div>
           </div>
