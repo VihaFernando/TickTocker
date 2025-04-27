@@ -158,19 +158,20 @@ export function CreateTimerForm() {
             Event Date & Time
           </Label>
           <div className="relative">
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
+              <CalendarIcon className="h-5 w-5 text-gray-400" />
+            </div>
             <Input
               id="eventDate"
               name="eventDate"
               type="datetime-local"
               min={minDate}
               required
-              className="pl-10 pr-3 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg appearance-none"
+              className="pl-10 py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg appearance-none"
+              style={{ paddingLeft: "2.5rem" }} /* Ensure consistent padding for iOS */
               value={formState.eventDate}
               onChange={handleChange}
             />
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-              <CalendarIcon className="h-5 w-5 text-gray-400" />
-            </div>
           </div>
           <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
         </motion.div>
