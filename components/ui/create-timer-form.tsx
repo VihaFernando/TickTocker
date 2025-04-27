@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+
+import { useState, useEffect } from "react"
 import { createTimer } from "@/utils/timer-actions"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
@@ -19,6 +20,19 @@ export function CreateTimerForm() {
     eventDate: "",
   })
 
+  // Set the initial date value when component mounts
+  useEffect(() => {
+    // Get current date and time in local timezone
+    const now = new Date()
+    // Format to YYYY-MM-DDThh:mm
+    const localDatetime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+
+    setFormState((prev) => ({
+      ...prev,
+      eventDate: localDatetime,
+    }))
+  }, [])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormState({
       ...formState,
@@ -31,6 +45,20 @@ export function CreateTimerForm() {
     setIsSubmitting(true)
 
     const formData = new FormData(e.currentTarget)
+
+    // Ensure the date is preserved in the user's timezone
+    const eventDate = formData.get("eventDate") as string
+    if (eventDate) {
+      // Create a Date object in the user's local timezone
+      const localDate = new Date(eventDate)
+
+      // Convert to ISO string (this will be in UTC)
+      const isoDate = localDate.toISOString()
+
+      // Replace the form data with the ISO string
+      formData.set("eventDate", isoDate)
+    }
+
     const result = await createTimer(formData)
 
     setIsSubmitting(false)
@@ -47,17 +75,20 @@ export function CreateTimerForm() {
         description: "Timer created successfully",
       })
       router.refresh()
-      // Reset the form
+      // Reset the form name but keep the date field with updated current time
+      const now = new Date()
+      const localDatetime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+
       setFormState({
         eventName: "",
-        eventDate: "",
+        eventDate: localDatetime,
       })
     }
   }
 
-  // Calculate minimum date (today) in local timezone
+  // Calculate minimum date (today)
   const today = new Date()
-  const minDate = today.toISOString().slice(0, 16) // Format as YYYY-MM-DDThh:mm
+  const minDate = today.toISOString().split("T")[0]
 
   const formVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -141,6 +172,7 @@ export function CreateTimerForm() {
               <CalendarIcon className="h-5 w-5 text-gray-400" />
             </div>
           </div>
+          <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
         </motion.div>
 
         <motion.div variants={itemVariants}>

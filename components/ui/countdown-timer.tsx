@@ -24,7 +24,8 @@ export function CountdownTimer({ eventName, eventDate, className = "", size = "m
   useEffect(() => {
     function updateCountdown() {
       const now = new Date()
-      const target = new Date(eventDate) // eventDate is in local time (YYYY-MM-DDThh:mm)
+      // Parse the date string in the user's local timezone
+      const target = new Date(eventDate)
       const diff = target.getTime() - now.getTime()
 
       if (diff <= 0) {
@@ -49,7 +50,7 @@ export function CountdownTimer({ eventName, eventDate, className = "", size = "m
       // Calculate total hours for display when less than a week
       const totalHours = Math.floor(diff / (1000 * 60 * 60))
 
-      // Less than a week is 7 days
+      // Less than a week is 7 days or 168 hours
       const isLessThanWeek = days < 7
 
       setTimeRemaining({
@@ -75,10 +76,15 @@ export function CountdownTimer({ eventName, eventDate, className = "", size = "m
   const { days, hours, minutes, seconds, isLessThanWeek, isPast, totalHours } = timeRemaining
 
   // Determine font sizes based on the size prop
-  const titleSize = size === "large" ? "text-3xl md:text-4xl" : size === "medium" ? "text-2xl" : "text-xl"
+  const titleSize =
+    size === "large" ? "text-2xl md:text-4xl" : size === "medium" ? "text-xl md:text-2xl" : "text-lg md:text-xl"
   const digitSize =
-    size === "large" ? "text-5xl md:text-7xl" : size === "medium" ? "text-4xl md:text-6xl" : "text-3xl md:text-4xl"
-  const labelSize = size === "large" ? "text-sm" : size === "medium" ? "text-xs" : "text-xs"
+    size === "large"
+      ? "text-3xl md:text-5xl lg:text-7xl"
+      : size === "medium"
+        ? "text-2xl md:text-4xl lg:text-6xl"
+        : "text-xl md:text-3xl lg:text-4xl"
+  const labelSize = size === "large" ? "text-xs md:text-sm" : "text-xs"
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
@@ -93,7 +99,7 @@ export function CountdownTimer({ eventName, eventDate, className = "", size = "m
 
       {isPast ? (
         <motion.div
-          className="text-2xl font-bold text-red-500"
+          className="text-xl md:text-2xl font-bold text-red-500"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -102,12 +108,12 @@ export function CountdownTimer({ eventName, eventDate, className = "", size = "m
         </motion.div>
       ) : (
         <motion.div
-          className="flex flex-col items-center"
+          className="flex flex-col items-center w-full"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <div className="flex space-x-2 md:space-x-4">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
             {isLessThanWeek ? (
               <>
                 <TimeDigit value={totalHours} label="HOURS" size={digitSize} labelSize={labelSize} />
@@ -142,7 +148,7 @@ interface TimeDigitProps {
 function TimeDigit({ value, label, size, labelSize }: TimeDigitProps) {
   return (
     <div className="flex flex-col items-center">
-      <div className="relative bg-gradient-to-b from-white to-gray-100 rounded-lg shadow-lg px-2 py-2 sm:px-3 sm:py-2 min-w-0 w-full flex items-center justify-center">
+      <div className="relative bg-gradient-to-b from-white to-gray-100 rounded-lg shadow-lg px-2 md:px-3 py-1 md:py-2">
         <AnimatePresence mode="popLayout">
           <motion.div
             key={value}
@@ -157,7 +163,7 @@ function TimeDigit({ value, label, size, labelSize }: TimeDigitProps) {
         </AnimatePresence>
       </div>
       <motion.div
-        className={`${labelSize} font-semibold text-gray-200 mt-2 tracking-wider`}
+        className={`${labelSize} font-semibold text-gray-200 mt-1 md:mt-2 tracking-wider`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
@@ -171,45 +177,7 @@ function TimeDigit({ value, label, size, labelSize }: TimeDigitProps) {
 function TimeSeparator({ size }: { size: string }) {
   return (
     <div className="flex items-center justify-center">
-      <div className={`${size} font-bold text-gray-300 mx-1`}>:</div>
+      <div className={`${size} font-bold text-gray-300 mx-0 md:mx-1`}>:</div>
     </div>
   )
-}
-
-export function formatTimeRemaining(targetDate: Date | string): {
-  timeString: string
-  isLessThanWeek: boolean
-} {
-  const target = typeof targetDate === "string" ? new Date(targetDate) : targetDate // Interprets as local time
-  const now = new Date()
-
-  // Calculate the difference in milliseconds
-  const diff = target.getTime() - now.getTime()
-
-  // If the date is in the past
-  if (diff <= 0) {
-    return { timeString: "Event has passed", isLessThanWeek: true }
-  }
-
-  // Calculate time units
-  const seconds = Math.floor(diff / 1000) % 60
-  const minutes = Math.floor(diff / (1000 * 60)) % 60
-  const hours = Math.floor(diff / (1000 * 60 * 60)) % 24
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  const totalHours = Math.floor(diff / (1000 * 60 * 60))
-
-  const isLessThanWeek = days < 7
-
-  // Format the string based on the time remaining
-  if (isLessThanWeek) {
-    return {
-      timeString: `${totalHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
-      isLessThanWeek,
-    }
-  } else {
-    return {
-      timeString: `${days}d ${hours.toString().padStart(2, "0")}h ${minutes.toString().padStart(2, "0")}m`,
-      isLessThanWeek,
-    }
-  }
 }

@@ -25,14 +25,14 @@ export async function createTimer(formData: FormData) {
 
   const isFirstTimer = count === 0
 
-  // Create the timer
+  // Create the timer - store the date as is (it's already in ISO format)
   const { data, error } = await supabase
     .from("timers")
     .insert([
       {
         user_id: user.id,
         event_name: eventName,
-        event_date: new Date(eventDate).toISOString(),
+        event_date: eventDate, // Already in ISO format from the form
         is_main_display: isFirstTimer, // Make first timer the main display
       },
     ])
@@ -183,7 +183,7 @@ export async function updateTimer(timerId: string, formData: FormData) {
     .from("timers")
     .update({
       event_name: eventName,
-      event_date: new Date(eventDate).toISOString(),
+      event_date: eventDate, // Already in ISO format from the form
       updated_at: new Date().toISOString(),
     })
     .eq("id", timerId)
