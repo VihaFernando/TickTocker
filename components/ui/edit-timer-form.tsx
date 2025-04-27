@@ -95,31 +95,23 @@ export function EditTimerForm({ id, eventName, eventDate }: EditTimerFormProps) 
 
         <div>
           <Label htmlFor="eventDate">Event Date & Time</Label>
-          <div className="relative">
-            {/* Calendar icon wrapper */}
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
+
+          {/* Custom input wrapper with icon */}
+          <div className="flex items-center border border-gray-200 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 overflow-hidden mt-1">
+            <div className="flex-shrink-0 pl-3 pr-2">
               <CalendarIcon className="h-5 w-5 text-gray-400" />
             </div>
-
-            {/* Date input with wrapper to handle iOS styling */}
-            <div className="relative">
-              <Input
-                id="eventDate"
-                name="eventDate"
-                type="datetime-local"
-                value={formattedDate}
-                onChange={(e) => setFormattedDate(e.target.value)}
-                required
-                className="w-full py-2 border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg mt-1 text-left"
-                style={{
-                  paddingLeft: "2.5rem",
-                  textAlign: "left",
-                  direction: "ltr",
-                  textIndent: "0",
-                }}
-              />
-            </div>
+            <input
+              id="eventDate"
+              name="eventDate"
+              type="datetime-local"
+              value={formattedDate}
+              onChange={(e) => setFormattedDate(e.target.value)}
+              required
+              className="flex-grow py-2 px-1 border-0 focus:ring-0 focus:outline-none text-left w-full"
+            />
           </div>
+
           <p className="text-xs text-gray-500 mt-1">Times are shown in your local timezone</p>
         </div>
 
