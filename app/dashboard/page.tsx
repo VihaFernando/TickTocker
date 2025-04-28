@@ -71,7 +71,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="bg-white p-6 rounded-xl shadow-md text-center border border-gray-100">
-                <p className="text-gray-600">You don't have any timers yet. Create your first timer!</p>
+                <p className="text-gray-600">You don't have any timers yet. Create your first timer!!!!!</p>
               </div>
             )}
           </div>
